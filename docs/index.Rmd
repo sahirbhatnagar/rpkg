@@ -1,0 +1,135 @@
+---
+title: "`html_clean` template example"
+output:
+  rmdformats::html_clean:
+    fig_width: 6
+    fig_height: 6
+    highlight: kate
+    thumbnails: false
+    lightbox: true
+    gallery: true
+---
+
+
+```{r knitr_init, echo=FALSE, results="asis", cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print = "75")
+opts_chunk$set(echo = FALSE,
+	             cache = FALSE,
+               prompt = FALSE,
+               tidy = FALSE,
+               comment = NA,
+               message = FALSE,
+               warning = FALSE)
+opts_knit$set(width = 75)
+```
+
+# Part 2: Creating a Website {.tabset .tabset-fade .tabset-pills}
+
+*************
+
+## Introduction
+
+Even until a couple of years ago, creating a website along with a blog that embeded both code and text, required specific knowledge of `HTML`. Tools such as [`markdown`](https://daringfireball.net/projects/markdown/syntax) and [`R Markdown`](https://rmarkdown.rstudio.com/), have abstracted the difficult part of writing `HTML` code for us, so that we can focus on content and creating reproducible analyses. Building on these very tools, the [`blogdown`](https://bookdown.org/yihui/blogdown/) package by [`Yihue Xie`](https://yihui.name/) has made it that much easier to create websites that allow you to showcase your scripts, code and reports, while also maintaining a public portfolio, i.e., **having an online presence**.  
+
+
+In this part, we will create a minimal working example of a [`blogdown`](https://bookdown.org/yihui/blogdown/) website. I have provided detailed screenshots with annotations of each step. In general a red encircled annotation means you should click on it, and a red rectangular annotation means that you should verify or be aware of this. _Note: the screenshots provided here are from a Linux operating system, however it will be similar on a Windows or Mac._  
+
+
+<br>
+
+
+## Step 1: Create 2 git repos
+
+We first need to create two GitHub repositories (abbreviated as repo). One will hold the source code for your website, and the other will host the compiled `HTML` files which make up your website (these are often referred to as static files). Head over to your GitHub account online and create a new repository:
+
+![](assets/img/git/rpkg001.png)
+
+*************
+
+<br>
+
+Give it a name. It can be anything you want such as `website`, `website_source`, `source` (just pick a name that will remind you that this repository contains the source files of your website). In the screenshots below I used `website` throughout. Check the box to initialize the repository with a README and then click on `Create repository`:
+
+![](assets/img/git/rpkg002.png)
+
+# Code and tables
+
+## Syntax highlighting
+
+Here is a sample code chunk, just to show that syntax highlighting works as expected.
+
+```{r sh, echo=TRUE, eval=TRUE}
+library(ggplot2)
+library(dplyr)
+
+not_null <- function (v) {
+  if (!is.null(v)) return(paste(v, "not null"))
+}
+
+data(iris)
+tab <- iris %>%
+  group_by(Species) %>%
+  summarise(Sepal.Length = mean(Sepal.Length),
+            Sepal.Width  = mean(Sepal.Width),
+            Petal.Length = mean(Petal.Length),
+            Petal.Width  = mean(Petal.Length))
+```
+
+
+## Verbatim
+
+Here is the structure of the `iris` dataset.
+
+```{r iris_str, echo=TRUE}
+str(iris)
+```
+
+## Table
+
+Here is a sample table output.
+
+```{r iris_table}
+
+kable(tab)
+
+```
+
+Here we display a crosstab displayed in several different ways with a "pills"
+interface. To do this, just pass your `table()` result to the `pilltabs()`
+function.
+
+```{r iris_pilltabs, results="asis"}
+
+iris$seplc <- cut(iris$Sepal.Length,3)
+tab <- table(iris$Species, iris$seplc)
+pilltabs(tab)
+
+```
+
+
+# Figures
+
+Here is an histogram.
+
+```{r iris_hist}
+ggplot(data=iris) +
+    geom_histogram(aes(x=Petal.Width)) +
+    facet_grid(Species~.)
+
+```
+
+And a wonderful scatterplot, with a caption.
+
+```{r iris_scatter1, fig.cap="This is a caption"}
+ggplot(data=iris) + geom_point(aes(x=Petal.Width, y=Petal.Length, color=Species))
+```
+
+# Mathjax
+
+And finally, an incredibly complex equation :
+
+$$ y = \sqrt{\frac{1}{x}} $$
