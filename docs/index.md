@@ -20,21 +20,7 @@ editor_options:
 ---
 
 
-```{r knitr_init, echo=FALSE, results="asis", cache=FALSE}
-library(knitr)
-library(rmdformats)
 
-## Global options
-options(max.print = "75")
-opts_chunk$set(echo = FALSE,
-	             cache = FALSE,
-               prompt = FALSE,
-               tidy = FALSE,
-               comment = NA,
-               message = FALSE,
-               warning = FALSE)
-opts_knit$set(width = 75)
-```
 
 # Introduction
 
@@ -83,9 +69,10 @@ usethis::use_git_config(user.name = "gauss", user.email = "gauss@normal.org")
 This section walks you through the process of creating a GitHub repository (abbreviated as repo), creating a local copy of the repo (i.e. on your laptop), making some changes locally and updating your changes on the remote (aka GitHub repo). It assumes that you have successfully completed the requirements outlined in [Section 2](#req). The following figure summarizes some key terminology that we will make use of in this section:
 
 
-```{r github1, fig.cap="source: http://ohi-science.org/data-science-training/"}
-knitr::include_graphics("assets/img/git/rpkg000.png", dpi = 96)
-```
+<div class="figure">
+<img src="assets/img/git/rpkg000.png" alt="source: http://ohi-science.org/data-science-training/" width="670" />
+<p class="caption">source: http://ohi-science.org/data-science-training/</p>
+</div>
 
 <br>
 
@@ -94,17 +81,12 @@ knitr::include_graphics("assets/img/git/rpkg000.png", dpi = 96)
 For each step, I have provided screenshots annotated with red rectangles, circles and arrows. You can click on each image to enlarge it. The following table describes what each of the annotations represent. 
 
 
-```{r}
-library(knitr)
-create_thumbnail <- function(file) {
-  paste0("<a href=\"", file, "\"><img src=\"", file, "\" style=\"width: 350px;\"/></a>")
-}
-df <- data.frame(Annotation       = c("assets/img/box.png","assets/img/circle.png","assets/img/arrow.png"), 
-                 Description = c("Enter text or fill in the blank","Click on the circled button","Take note of. No action is required."))
 
-df$Annotation <- create_thumbnail(df$Annotation)
-knitr::kable(df)
-```
+Annotation                                                                                     Description                          
+---------------------------------------------------------------------------------------------  -------------------------------------
+<a href="assets/img/box.png"><img src="assets/img/box.png" style="width: 350px;"/></a>         Enter text or fill in the blank      
+<a href="assets/img/circle.png"><img src="assets/img/circle.png" style="width: 350px;"/></a>   Click on the circled button          
+<a href="assets/img/arrow.png"><img src="assets/img/arrow.png" style="width: 350px;"/></a>     Take note of. No action is required. 
 
 
 <br>
@@ -113,22 +95,16 @@ knitr::kable(df)
 
 We first create a GitHub repo. Head over to https://github.com and login. Then click on new repository:
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg001.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg001.png" width="1747" />
 
 
 Give it a name. It can be anything you want (just pick a name that will remind you that this repository contains the source files of your `R` package). In the screenshots below I used `rpkg` throughout. Click on `Create repository`:
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg002.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg002.png" width="1403" />
 
 Copy the link of your newly created repo to your clipboard:
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg003.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg003.png" width="1483" />
 
 
 <br>
@@ -137,28 +113,20 @@ knitr::include_graphics("assets/img/git/rpkg003.png", dpi = 96)
 
 Create a local copy of the remote repo using `RStudio` projects:
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg004.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg004.png" width="1924" />
 
 Click on `Version Control`:
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg005.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg005.png" width="941" />
 
 Click on `Git`. Note that if you get an error or you don't see this option, this likely means that your `RStudio` doesn't know where to find your local `Git` installation. Please see [Chapter 13: Detect Git from RStudio](https://happygitwithr.com/rstudio-see-git.html) for troubleshooting this.
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg006.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg006.png" width="931" />
 
 
 Paste the link to your remote repo in the `Repository URL` box, name the folder that will contain your `R` package files, and browse to where you want the folder to be saved in your filesystem. Click on `Create Project`:
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg007.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg007.png" width="932" />
 
 
 Your `RStudio` window should open a new project in the specfied directory. Take note of the following points annotated in the screenshot below:
@@ -170,9 +138,7 @@ Your `RStudio` window should open a new project in the specfied directory. Take 
 5. A dropdown menu with extended `Git` functionalities. 
 
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg008.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg008.png" width="1912" />
 
 
 <br>
@@ -181,38 +147,31 @@ knitr::include_graphics("assets/img/git/rpkg008.png", dpi = 96)
 
 The following figure shows the commands needed for a basic version controlled workflow. Refer back to this figure once you complete [Step 3](#add) and then once again when you complete [Step 4](#push) (it should make a little more sense). 
 
-```{r, fig.cap="source: https://www.edureka.co/blog/git-tutorial/"}
-knitr::include_graphics("assets/img/git/rpkg022.png", dpi = 96)
-```
+<div class="figure">
+<img src="assets/img/git/rpkg022.png" alt="source: https://www.edureka.co/blog/git-tutorial/" width="784" />
+<p class="caption">source: https://www.edureka.co/blog/git-tutorial/</p>
+</div>
 
 
 
 Have you ever versioned a file by adding your initials or the date? That is effectively a `commit`, albeit only for a single file: it is a version that is significant to you and that you might want to inspect or revert to later [@happygit]. The `commit` command is used to save your changes to the local repository. From the `Git` tab, click on `Commit`:
 
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg009.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg009.png" width="646" />
 
 Note that you have to explicitly tell `Git` which changes you want to include in a `commit` before running the `git commit` command. This means that a file won't be automatically included in the next commit just because it was changed. Instead, you need to use the `git add` command to mark the desired changes for inclusion. Instead of typing `git add` in the terminal, you can simply click the boxes next to the files you want to add (this is also referred to as _staging_ a file). The lines 1 to 4 highlighted in green refer to the contents of the `.gitignore` file and the green highlight indicates they are being added to the file (red highlight indicates removal of a line):
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg010.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg010.png" width="998" />
 
 Every time you make a `commit` you must also write a short `commit` message. Ideally, this conveys the motivation for the change. Remember, the diff will show the content. When you revisit a project after a break or need to digest recent changes made by a colleague, looking at the history, by reading commit messages and skimming through diffs, is an extremely efficient way to get up to speed [@happygit]. Enter a `commit` message and click on the `Commit` button:
 
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg011.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg011.png" width="995" />
 
 
 If everything worked, you should see the following screen with the `commit` message and the files that were added:
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg012.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg012.png" width="862" />
 
 
 <br>
@@ -221,23 +180,17 @@ knitr::include_graphics("assets/img/git/rpkg012.png", dpi = 96)
 
 The `push` command is used to publish new local commits on a `remote` server (the remote repo you created in [Step 1](#remote)):
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg013.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg013.png" width="1000" />
 
 Enter your username:
 
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg014.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg014.png" width="990" />
 
 
 and your password:
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg015.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg015.png" width="993" />
 
 Note the following:
 
@@ -247,9 +200,7 @@ Note the following:
 4. The command you can enter in the terminal instead of using the `RStudio` interface to `push` your commit to the `remote`.
 
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg016.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg016.png" width="994" />
 
 Head over to your remote `GitHub` repo and take note of the following:
 
@@ -260,9 +211,7 @@ Head over to your remote `GitHub` repo and take note of the following:
 5. The number of commits (aka snapshots of the repo).
 6. The number of branches. 
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg017.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg017.png" width="1510" />
 
 
 <br>
@@ -272,19 +221,13 @@ knitr::include_graphics("assets/img/git/rpkg017.png", dpi = 96)
 Link your `GitHub` account to `GitKraken`; you will be prompted for this when opening the `GitKraken` application for the first time. Open the local repo created in [Step 2](#clone):
 
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg018.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg018.png" width="1920" />
 
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg019.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg019.png" width="980" />
 
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg020.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg020.png" width="1087" />
 
 The following screenshot shows the local repo in the `GitKraken` GUI. Note the following (which has similar attributes to the online `GitHub` repo):
 
@@ -295,9 +238,7 @@ The following screenshot shows the local repo in the `GitKraken` GUI. Note the f
 5. The branches available locally.
 6. The branches available on the remote.
 
-```{r}
-knitr::include_graphics("assets/img/git/rpkg021.png", dpi = 96)
-```
+<img src="assets/img/git/rpkg021.png" width="1913" />
 
 
 <br><br>
@@ -314,9 +255,6 @@ Hopefully you were able to successfully complete all the steps in this Section. 
 
 
 
-```{r}
-knitr::knit_exit()
-```
 
 
 
@@ -326,80 +264,8 @@ knitr::knit_exit()
 
 
 
-# Code and tables
-
-## Syntax highlighting
-
-Here is a sample code chunk, just to show that syntax highlighting works as expected.
-
-```{r sh, echo=TRUE, eval=TRUE}
-library(ggplot2)
-library(dplyr)
-
-not_null <- function (v) {
-  if (!is.null(v)) return(paste(v, "not null"))
-}
-
-data(iris)
-tab <- iris %>%
-  group_by(Species) %>%
-  summarise(Sepal.Length = mean(Sepal.Length),
-            Sepal.Width  = mean(Sepal.Width),
-            Petal.Length = mean(Petal.Length),
-            Petal.Width  = mean(Petal.Length))
-```
 
 
-## Verbatim
-
-Here is the structure of the `iris` dataset.
-
-```{r iris_str, echo=TRUE}
-str(iris)
-```
-
-## Table
-
-Here is a sample table output.
-
-```{r iris_table}
-
-kable(tab)
-
-```
-
-Here we display a crosstab displayed in several different ways with a "pills"
-interface. To do this, just pass your `table()` result to the `pilltabs()`
-function.
-
-```{r iris_pilltabs, results="asis"}
-
-iris$seplc <- cut(iris$Sepal.Length,3)
-tab <- table(iris$Species, iris$seplc)
-pilltabs(tab)
-
-```
 
 
-# Figures
 
-Here is an histogram.
-
-```{r iris_hist}
-ggplot(data=iris) +
-    geom_histogram(aes(x=Petal.Width)) +
-    facet_grid(Species~.)
-
-```
-
-And a wonderful scatterplot, with a caption.
-
-```{r iris_scatter1, fig.cap="This is a caption"}
-ggplot(data=iris) + geom_point(aes(x=Petal.Width, y=Petal.Length, color=Species))
-```
-
-# Mathjax
-
-And finally, an incredibly complex equation :
-
-$$ y = \sqrt{\frac{1}{x}} $$
