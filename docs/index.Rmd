@@ -3,7 +3,7 @@ title: "Creating an `R` Package"
 #subtitle: "An introduction"
 author: by Sahir Rai Bhatnagar
 output:
-  rmdformats::html_clean:
+  rmdformats::readthedown:
     fig_width: 6
     fig_height: 6
     highlight: kate
