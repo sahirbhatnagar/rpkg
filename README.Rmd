@@ -7,25 +7,20 @@ output: github_document
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
 )
 ```
+
 # rpkg
 
-The goal of rpkg is to ...
+The goal of `rpkg` is to show how to make an `R` package.
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+# Website
 
-```{r cars}
-summary(cars)
-```
+Visit https://sahirbhatnagar.com/rpkg for details. 
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
+# Source
 
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+View the source files for the website at https://github.com/sahirbhatnagar/rpkg/tree/master/docs

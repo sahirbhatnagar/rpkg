@@ -14,11 +14,15 @@ output:
     keep_md: yes
     number_sections: true
     use_bookdown: true
+    toc_depth: 3
+    css: style.css
 bibliography: rpkg.bib
 link-citations: yes
 editor_options: 
   chunk_output_type: console
 ---
+
+
 
 
 ```{r knitr_init, echo=FALSE, results="asis", cache=FALSE}
@@ -312,7 +316,7 @@ Hopefully you were able to successfully complete all the steps in this Section. 
 
 
 
-# Quick Start
+# Building an `R` package
 
 This section runs through the development of a small toy package. It's meant to illustrate the most important components of an `R` package. We will then provide a detailed treatment of the key components in the next sections. 
 
@@ -337,9 +341,18 @@ knitr::include_graphics("assets/img/quick/quick001.png", dpi = 96)
 
 <br>
 
-## Create Required Files and Folders
+## Getting Started
 
-We will rely heavily on the `usethis` package [@usethis] to create the required files and folders for us. Ensure that your working directory is set to the root of the GitHub repo you created in [Section 3](#gitgithub). The following shows a plain text listing of the directory:
+We will rely heavily on the following packages to build our own package:  
+
+1. `usethis` [@usethis] for setup and creating the required files and folders   
+2. `devtools` [@devtools] to build, install and check our package  
+3. `roxygen2` [@roxygen2] to document our functions  
+4. `rmarkdown` [@rmarkdown1 ; @rmarkdown2] for creating package vignettes  
+
+### Step 1: Check working directory
+
+Ensure that your working directory is set to the root of the GitHub repo you created in [Section 3](#gitgithub). The following shows a plain text listing of the directory (at this stage, it should only contain two files):
 
 ```{r, eval=FALSE}
 knitr::include_graphics("assets/img/quick/quick002.png", dpi = 96)
@@ -388,24 +401,484 @@ cat('-- .gitignore
 ```
 
 
+### Step 2: Add required `R` package files
 
+Run the following commands in `R` from the root directory of your package:
+
+```{r, eval=FALSE, echo=TRUE}
+# creates description and namespace files
+usethis::use_description()
+usethis::use_namespace()
+
+# Create R directory
+base::dir.create("R")
+
+# creates Package-level documentation so you can run ?nameofpackage
+usethis::use_package_doc()
+
+# created README.Rmd for Github landing page
+# an .Rbuildignore file gets created
+usethis::use_readme_rmd()
+
+# creates license file
+usethis::use_mit_license("Sahir Bhatnagar")
+
+# creates news file
+usethis::use_news_md()
+
+# setup continuous integration via travis-ci
+usethis::use_travis()
+
+# sets up testing infrastructure
+usethis::use_testthat()
+```
+
+Your package directory should now have the following structure:
 
 ```{r comment = NA}
-# twee("/home/sahir/git_repositories/rpkgs/")
+# twee("/home/sahir/git_repositories/rpkg/")
 cat('-- .gitignore
+-- .Rbuildignore
+-- .travis.yml
 -- DESCRIPTION
+-- LICENSE
+-- LICENSE.md
 -- NAMESPACE
+-- NEWS.md
 -- R
-   |__rpkgs-package.R
--- rpkgs.Rproj'
+   |__rpkg-package.R
+-- README.Rmd
+-- rpkg.Rproj
+-- tests
+   |__testthat
+   |__testthat.R'
 )
 ```
 
 
-## Documentation
+### Step 3: Configure `RStudio` build options
+
+**Restart RStudio**. You should now see a `Build` tab:
+
+```{r}
+knitr::include_graphics("assets/img/quick/quick007.png", dpi = 96)
+```
 
 
-\@ref(tab:tab1)
+Click on the `.Rproj` file:
+
+```{r}
+knitr::include_graphics("assets/img/quick/quick003.png", dpi = 96)
+```
+
+Change the following options:
+
+```{r}
+knitr::include_graphics("assets/img/quick/quick004.png", dpi = 96)
+```
+
+```{r}
+knitr::include_graphics("assets/img/quick/quick005.png", dpi = 96)
+```
+
+```{r}
+knitr::include_graphics("assets/img/quick/quick006.png", dpi = 96)
+```
+
+
+### Step 4: Build and install
+
+On the `Build` tab, click on `Install and Restart` or use `Ctrl/Cmd + Shift + B`:
+
+```{r}
+knitr::include_graphics("assets/img/quick/quick008.png", dpi = 96)
+```
+
+This will install and load your package. Now enter the following commands:
+
+```{r, echo=TRUE, eval=FALSE}
+?rpkg
+rpkg::
+pacman::p_functions(rpkg)
+```
+
+
+You will notice that your package has a help page for the package by calling `?rpkg` and also has no functions (given by `pacman::p_functions()`):
+
+```{r}
+knitr::include_graphics("assets/img/quick/quick009.png", dpi = 96)
+```
+
+
+In the `man` folder you will see a `rpkg-package.Rd` file. This is an `R documentation` formatted file and is generated automatically by the `roxygen2` package. We will talk more about documentation in the following sections. 
+
+```{r}
+knitr::include_graphics("assets/img/quick/quick010.png", dpi = 96)
+```
+
+### Step 5: Fill in the blanks and commit changes 
+
+:::rmdwarning
+**Exercise**: Update the `DESCRIPTION` file and the `README.Rmd` file. Then rebuild the package. Add and commit your changes and push them to the remote repo. Check the commit history and the differences between the previous commit.
+:::
+
+
+### Step 6: Add a dataset
+
+It's often useful to include data in a package. If you're releasing the package to a broad audience, it's a way to provide compelling use cases for the package's functions. Before I start writing functions for my packages, I usually add a toy dataset first. Enter the following `R` code:
+
+```{r, echo=TRUE, eval=FALSE}
+# this will setup the folders needed for the data and raw-data
+usethis::use_data_raw()
+```
+
+:::rmdnote
+The `data-raw` folder gets added to the `.Rbuildignore` so that it's not shipped with the package. This folder is used to store the raw data and the scripts used to parse it and create the final version of the dataset. 
+:::
+
+For this exercise, we will use a data set on two-week seizure counts for 59 epileptics (or you can use your own). Download the [raw `.csv` file](https://raw.githubusercontent.com/sahirbhatnagar/raqc/master/003-model-output/epil.csv) and save it in the `data-raw` folder. 
+
+Create an `R` script called `seizure-data.R` and save it in the `data-raw` folder. This script will contain the code used to clean the dataset and ouput the final cleaned version to be shipped with the package. Enter the following code in the `seizure-data.R` script:
+
+```{r, eval=FALSE, echo=TRUE}
+
+# load required packages ----
+if (!require("pacman")) install.packages("pacman") 
+pacman::p_load(magrittr, dplyr, usethis, data.table, here)
+
+# clean data ----
+epil <- read.csv(here::here("data-raw","epil.csv"))
+DT <- epil %>% as.data.table
+DT.base <- DT %>% distinct(subject, .keep_all = TRUE)
+DT.base[,`:=`(period=0,y=base)]
+DT.epil <- rbind(DT, DT.base)
+setkey(DT.epil, subject, period)
+DT.epil[,`:=`(post=as.numeric(period>0), tj=ifelse(period==0,8,2))]
+df_epil <- as.data.frame(DT.epil) %>% dplyr::select(y, trt, post, subject, tj)
+
+# write data in correct format to data folder ----
+usethis::use_data(df_epil, overwrite = TRUE)
+```
+
+:::rmdwarning
+**Exercise**: Source the `seizure-data.R` script. Inspect the additions and then add and commit the changes. 
+:::
+
+
+### Step 7: Document the dataset
+
+Datasets must be documented. We usually document them in `R/data.R`. Enter the following in a file called `data.R` and save it in the `R` folder:
+
+```{r, echo=TRUE, eval=FALSE}
+#' Seizure Counts for Epileptics
+#'
+#' @description Thall and Vail (1990) give a data set on two-week 
+#' seizure counts for 59 epileptics. The number of seizures was 
+#' recorded for a baseline period of 8 weeks, and then patients 
+#' were randomly assigned to a treatment group or a control group. 
+#' Counts were then recorded for four successive two-week periods. 
+#' The subject's age is the only covariate.
+#'
+#' @format his data frame has 295 rows and the following 5 columns:
+#' \describe{
+#'   \item{y}{the count for the 2-week period.}
+#'   \item{trt}{treatment, "placebo" or "progabide"}
+#'   \item{post}{post treatment. 0 for no, 1 for yes}
+#'   \item{subject}{subject id}
+#'   \item{tj}{time}
+#' }
+#' @source \url{https://cran.r-project.org/package=MASS}
+"df_epil"
+```
+
+:::rmdnote
+You can also document multiple datasets in the same `R` file (see [here](https://github.com/sahirbhatnagar/sail/blob/master/R/data.R) for an example). Refer to the [Documentation section](#docs) for more details on `roxygen2` tags. 
+:::
+
+
+:::rmdwarning
+**Exercise**: Re-build the package. Check out the help page for the `df_epil` dataset using `?df_epil`. Inspect the additions and then add and commit the changes. 
+:::
+
+
+### Step 8: Add an `R` function
+
+To make our package actually useful, we need to add an `R` function. I use the following function for the purposes of illustration, which analyzes the data and outputs a summary of the results in the form of an `HTML` table. Save this function in `R/fit_models`:
+
+
+```{r, eval=FALSE, echo=TRUE}
+fit_models <- function(formula, data) {
+
+  fit.glmm <- lme4::glmer(formula, 
+                          data = data, 
+                          family = "poisson", 
+                          offset = log(tj))
+  
+  sjPlot::tab_model(fit.glmm)
+
+}
+
+# example of how to use the function
+# fit_models(formula = y ~ trt*post + (1|subject), data = df_epil)
+```
+
+
+### Step 9: Document the `R` function
+
+We again make use of the `roxygen2` package to document our `R` function. The `sinew` [@sinew] package creates a skeleton for us. Enter the following commands in `R` to document the function:
+
+
+```{r, echo=TRUE, eval=FALSE}
+pacman::p_load(sinew)
+sinew::makeOxyFile("R/fit_models.R")
+```
+
+
+:::rmdwarning
+**Exercise**: Delete the `R/fit_models.R` file and rename `R/oxy-fit_models.R` to `R/fit_models.R`. Fill in the `roxygen2` template (refer to [the Section on documentation](#docs) for more details). Re-build the package. Check out the help page for the `fit_models` function using `?fit_models`. Inspect the additions and then add and commit the changes. Push to the remote repo. 
+:::
+
+
+### Step 10: Dependencies: What does your package need?
+
+See complete references on [DESCRIPTION](http://r-pkgs.had.co.nz/description.html) and [NAMESPACE](http://r-pkgs.had.co.nz/namespace.html).
+
+It’s the job of the DESCRIPTION to list the packages that your package needs to work. R has a rich set of ways of describing potential dependencies. For example, the following lines indicate that my package needs both `lme4` and `sjPlot` to work:
+
+```{r, comment=NA}
+cat('Imports:
+    lme4,
+    sjPlot'
+    )
+```
+
+Whereas, the lines below indicate that while my package can take advantage of lme4 and sjPlot, they're not required to make it work:
+
+```{r, comment=NA}
+cat('Suggests:
+    lme4,
+    sjPlot'
+    )
+```
+
+
+Both `Imports` and `Suggests` take a comma separated list of package names. I recommend putting one package on each line, and keeping them in alphabetical order. That makes it easy to skim.
+
+Imports and Suggests differ in their strength of dependency:
+
+- `Imports`: packages listed here must be present for your package to work. In fact, any time your package is installed, those packages will, if not already present, be installed on your computer (`devtools::load_all()` also checks that the packages are installed).
+
+:::rmdimportant
+Adding a package dependency in `Imports` ensures that it'll be installed. However, it does not mean that it will be attached along with your package (i.e., `library(x)`). The best practice is to explicitly refer to external functions using the syntax `package::function()`. This makes it very easy to identify which functions live outside of your package. This is especially useful when you read your code in the future.
+:::
+
+- `Suggests`: your package can use these packages, but doesn't require them. You might use suggested packages for example datasets, to run tests, build vignettes, or maybe there's only one function that needs the package. Packages listed in Suggests are not automatically installed along with your package. This means that you need to check if the package is available before using it (use requireNamespace(x, quietly = TRUE)). There are two basic scenarios:
+
+```{r, echo=TRUE, eval=FALSE}
+# You need the suggested package for this function    
+my_fun <- function(a, b) {
+  if (!requireNamespace("pkg", quietly = TRUE)) {
+    stop("Package \"pkg\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+}
+
+# There's a fallback method if the package isn't available
+my_fun <- function(a, b) {
+  if (requireNamespace("pkg", quietly = TRUE)) {
+    pkg::f()
+  } else {
+    g()
+  }
+}
+```
+
+
+
+The easiest way to add `Imports` and `Suggests` to your package is to use:
+
+```{r, echo=TRUE, eval=FALSE}
+usethis::use_package("lme4", type = "Imports")
+usethis::use_package("lme4", type = "Suggests")
+```
+
+This automatically puts them in the right place in your `DESCRIPTION`, and reminds you how to use them.
+
+
+
+:::rmdnote
+It's common for packages to be listed in `Imports` in `DESCRIPTION`, but not in `NAMESPACE`. In fact, this is what [Hadley recommends](https://r-pkgs.org/namespace.html#imports): list the package in `DESCRIPTION` so that it's installed, then always refer to it explicitly with `pkg::fun()`. The converse is not true. Every package mentioned in `NAMESPACE` must also be present in the `Imports` or `Depends` fields.
+:::
+
+
+:::rmdwarning
+**Exercise**: Add `lme4` and `sjPlot` to the `DESCRIPTION`. Re-build the package. Check out the help page for the package using `?rpkg`. Inspect the additions and then add and commit the changes. Push to the remote repo. 
+:::
+
+
+
+### Step 11: Check your package
+
+`R CMD check`, executed in the terminal, is the gold standard for checking that an `R` package is in full working order. `devtools::check()` is a convenient way to run this without leaving your `R` session.
+
+:::rmdwarning
+**Exercise**: Run `devtools::check()`. Fix the errors and rebuild the package. Add and commit your changes and push to remote repo.
+:::
+
+
+<br><br>
+
+
+
+
+# Vignettes
+
+You will likely want to create a document that walks users through the basics of how to use your package. You can do this through two formats:
+
+1. **Vignette**: This document is bundled with your `R` package, so it becomes locally available to a user once they install your package from CRAN. They will also have it available if they install the package from GitHub, as long as they use the `build_vignettes = TRUE` option when running `remotes::install_github`.
+2. **README** file: If you have your package on GitHub, this document will show up on the main page of the repository if there is a `README.md` file in the top directory of the repository. For an example, visit https://github.com/geanders/countytimezones and scroll down. You'll see a list of all the files and subdirectories included in the package repository and below that is the content in the package's README.md file, which gives a tutorial on using the package.
+
+The README file is a useful way to give GitHub users information about your package, but it will not be included in builds of the package or be available through CRAN for packages that are posted there. Instead, if you want to create tutorials or overview documents that are included in a package build, you should do that by adding one or more package vignettes. Vignettes are stored in a `vignettes` subdirectory within the package directory.
+
+To add a vignette file, saved within this subdirectory (which will be created if you do not already have it), use:
+
+```{r, eval=FALSE, echo=TRUE}
+usethis::use_vignette(name = "Introduction to my package")
+```
+
+
+:::rmdimportant
+Once you create a vignette with `usethis::use_vignette`, be sure to update the Vignette Index Entry in the vignette's YAML (the code at the top of an `R Markdown` document). Replace `Vignette Title` there with the actual title you use for the vignette.
+:::
+
+
+:::rmdwarning
+**Exercise**: Re-build the package. Inspect the additions and then add and commit the changes. Make sure the vignette is able to be compiled. Then push to the remote repo. 
+:::
+
+<br><br>
+
+# Continous Integration
+
+The objectives of this section are:
+
+ - Create an R package that is tested and deployed on [Travis](https://travis-ci.org/)
+ - Create an R package that is tested and deployed on [Appveyor](https://www.appveyor.com/)
+ 
+Continous integration (aka checking your package after every commit) is a software development technique used to ensure that any changes to your code do not break the package's functionality. Travis is a continuous integration service, which means that it runs automated testing code everytime you push to GitHub. For open source projects, Travis provides 50 minutes of free computation on a Ubuntu server for every push. For an `R` package, the most useful code to run is `devtools::check()`. 
+
+When it comes to `R` packages continuous integration means ensuring that your package builds without any errors or warnings, and making sure that all of the tests that you've written for your package are passing. Building your `R` package will protect you against some big errors, but the best way that you can ensure continuous integration will be useful to you is if you build robust and complete tests for every function in your package.
+
+## Travis and Appveyor
+
+Travis will test your package on Linux, and AppVeyor will test your package on Windows. Both of these services are free for `R` packages that are built in public `GitHub` repositories. These continuous integration services will run every time you push a new set of commits for your package repository. Both services integrate nicely with GitHub so you can see in GitHub's pull request pages whether or not your package is building correctly.
+
+### Using Travis
+
+To start using Travis: 
+
+1. Go to https://travis-ci.org and sign in with your GitHub account. 
+2. Ensure that you have run `usethis::use_travis()`.
+3. Clicking on your name in the upper right hand corner of the site will bring up a list of your public GitHub repositories with a switch next to each repo. If you turn the switch on then the next time you push to that repository Travis will look for a `.travis.yml` file in the root of the repository, and it will run tests on your package accordingly.
+4. Now add, commit, and push your changes to GitHub, which will trigger the first build of your package on Travis. Go back to https://travis-ci.org to watch your package be built and tested at the same time! You may want to make some changes to your .travis.yml file, and you can see all of the options available in [this guide](https://docs.travis-ci.com/user/languages/r).
+
+Once your package has been built for the first time you'll be able to obtain a badge, which is just a small image generated by Travis which indicates whether you package is building properly and passing all of your tests. You should display this badge in the `README.Rmd` file of your package's GitHub repository so that you and others can monitor the build status of your package (you should see the code for the badge appear in your console once you use `usethis::use_travis()`).
+
+### Using AppVeyor
+
+To start using AppVeyor: 
+
+1. Go to https://www.appveyor.com/ and sign in with your GitHub account. 
+2. Ensure that you have run `usethis::use_appveyor()`. This command will set up a default `appveyor.yml` for your `R` package
+3. After signing in click on `Projects` in the top navigation bar. If you have any GitHub repositories that use AppVeyor you'll be able to see them here. To add a new project click `New Project` and find the GitHub repo that corresponds to the `R` package you'd like to test on Windows. Click `Add` for AppVeyor to start tracking this repo.
+4. Now add, commit, and push your changes to GitHub, which will trigger the first build of your package on AppVeyor. 
+5. Go back to https://www.appveyor.com/ to see the result of the build. You may want to make some changes to your appveyor.yml file, and you can see all of the options available in the [r-appveyor guide](https://github.com/krlmlr/r-appveyor/blob/master/README.md) which is maintained by Kirill Müller. 
+6. Like Travis, AppVeyor also generates badges that you should add to the README.Rmd file of your package's GitHub repository (you should see the code for the badge appear in your console once you use `usethis::use_appveyor()`)
+
+
+:::rmdwarning
+**Exercise**: Re-build the package. Inspect the additions and then add and commit the changes. Then push to the remote repo. 
+:::
+
+<br><br>
+
+# Tests
+
+See [complete reference](http://r-pkgs.had.co.nz/tests.html).
+
+Testing is a vital part of package development. It ensures that your code does what you want it to do. Testing, however, adds an additional step to your development workflow. The goal of this section is to show you how to make this task easier and more effective by doing formal automated testing using the `testthat` package.
+
+The `testthat` package is designed to make it easy to setup a battery of tests for your R package. A nice introduction to the package can be found in [Hadley Wickham's article](https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf) in the _R Journal_. Essentially, the package contains a suite of functions for testing function/expression output with the expected output. Add the following to `tests/testthat/test-fit_models.R`:
+
+```{r, echo=TRUE, eval=FALSE}
+context("run fit_model with packaged dataset df_epil")
+
+data("df_epil")
+
+fit <- try(fit_models(formula = y ~ trt*post + (1|subject), data = df_epil),
+               silent = TRUE)
+
+test_that("no error in fitting fit_models for the epilepsy data", {
+
+  expect_false(inherits(fit, "try-error"))
+
+})
+```
+
+Then run the following commands in `R`:
+
+```{r, eval=FALSE, echo=TRUE}
+# execute the test
+devtools::test()
+
+# use code coverage
+usethis::use_coverage()
+
+# check code coverage
+devtools::test_coverage()
+```
+
+
+
+:::rmdwarning
+**Exercise**: Re-build the package. Run `devtools::check()`. Fix any errors. Inspect the additions and then add and commit the changes. Then push to the remote repo. 
+:::
+
+```{r tab3, results='asis', echo=FALSE, eval=FALSE}
+df_test <- data.frame(stringsAsFactors=FALSE,
+              Expectation = c("equals()", "is_identical_to()", "is_equivalent_to()",
+                              "is_a()", "matches()", "prints_text()",
+                              "shows_message()", "gives_warning()", "throws_error()",
+                              "is_true()"),
+              Description = c("check for equality with numerical fuzz",
+                              "strict equality via identical()",
+                              "like equals() but ignores object attributes",
+                              "checks the class of an object (using inherits())",
+                              "checks that a string matches a regular expression",
+                              "checks that an expression prints to the console",
+                              "checks for a message being generated",
+                              "checks that an expression gives a warning",
+                              "checks that an expression (properly) throws an error",
+                              "checks that an expression is TRUE")
+           )
+# df_roxy$Tag <- paste0( "\\", df_roxy$Tag)
+
+knitr::kable(df_test, 
+             col.names = c("Expectation","Description"),
+             booktabs = TRUE,
+             caption = "Brief summary of the types of comparisons that can be made [@rdpeng]")
+
+```
+
+<br><br>
+
+# Documentation {#docs}
+
+:::rmdnote
+In `RStudio`, go to `Help --> Roxygen Quick Reference` 
+:::
+
+Refer to Table \@ref(tab:tab1) and Table \@ref(tab:tab2) for a summary of the most commonly used `roxygen2` tags and formatting tags for creating function documentation.  
 
 ```{r tab1, results='asis', echo=FALSE}
 df_roxy <- data.frame(stringsAsFactors=FALSE,
@@ -430,11 +903,6 @@ knitr::kable(df_roxy,
              caption = "Common `roxygen2` tags to use in creating documentation for R functions [@rdpeng]")
 
 ```
-
-
-
-
-\@ref(tab:tab2)
 
 
 ```{r tab2, results='asis'}
@@ -464,6 +932,7 @@ knitr::kable(df_roxy2,
 2. [Mastering Software Development in R: Chapter 3](https://bookdown.org/rdpeng/RProgDA/building-r-packages.html)
 3. Advanced R: [Version 1](http://r-pkgs.had.co.nz/) and [Version 2](https://r-pkgs.org/)
 4. [Advanced R course: Chapter 6](https://privefl.github.io/advr38book/packages.html)
+5. [sinew: Simple R Package Documentation](https://metrumresearchgroup.github.io/sinew/)
 
 
 
@@ -485,80 +954,3 @@ knitr::knit_exit()
 
 
 
-# Code and tables
-
-## Syntax highlighting
-
-Here is a sample code chunk, just to show that syntax highlighting works as expected.
-
-```{r sh, echo=TRUE, eval=TRUE}
-library(ggplot2)
-library(dplyr)
-
-not_null <- function (v) {
-  if (!is.null(v)) return(paste(v, "not null"))
-}
-
-data(iris)
-tab <- iris %>%
-  group_by(Species) %>%
-  summarise(Sepal.Length = mean(Sepal.Length),
-            Sepal.Width  = mean(Sepal.Width),
-            Petal.Length = mean(Petal.Length),
-            Petal.Width  = mean(Petal.Length))
-```
-
-
-## Verbatim
-
-Here is the structure of the `iris` dataset.
-
-```{r iris_str, echo=TRUE}
-str(iris)
-```
-
-## Table
-
-Here is a sample table output.
-
-```{r iris_table}
-
-kable(tab)
-
-```
-
-Here we display a crosstab displayed in several different ways with a "pills"
-interface. To do this, just pass your `table()` result to the `pilltabs()`
-function.
-
-```{r iris_pilltabs, results="asis"}
-
-iris$seplc <- cut(iris$Sepal.Length,3)
-tab <- table(iris$Species, iris$seplc)
-pilltabs(tab)
-
-```
-
-
-# Figures
-
-Here is an histogram.
-
-```{r iris_hist}
-ggplot(data=iris) +
-    geom_histogram(aes(x=Petal.Width)) +
-    facet_grid(Species~.)
-
-```
-
-And a wonderful scatterplot, with a caption.
-
-```{r iris_scatter1, fig.cap="This is a caption"}
-ggplot(data=iris) + geom_point(aes(x=Petal.Width, y=Petal.Length, color=Species))
-```
-
-# Mathjax
-
-And finally, an incredibly complex equation :
-
-$$ y = \sqrt{\frac{1}{x}} $$
