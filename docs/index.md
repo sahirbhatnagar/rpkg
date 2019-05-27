@@ -706,6 +706,10 @@ To start using AppVeyor:
 
 See [complete reference](http://r-pkgs.had.co.nz/tests.html).
 
+:::rmdimportant
+**What to test**: _Whenever you are tempted to type something into a print statement or a debugger expression, write it as a test instead._ — Martin Fowler
+:::
+
 Testing is a vital part of package development. It ensures that your code does what you want it to do. Testing, however, adds an additional step to your development workflow. The goal of this section is to show you how to make this task easier and more effective by doing formal automated testing using the `testthat` package.
 
 The `testthat` package is designed to make it easy to setup a battery of tests for your R package. A nice introduction to the package can be found in [Hadley Wickham's article](https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf) in the _R Journal_. Essentially, the package contains a suite of functions for testing function/expression output with the expected output. Add the following to `tests/testthat/test-fit_models.R`:
@@ -746,6 +750,54 @@ devtools::test_coverage()
 **Exercise**: Re-build the package. Run `devtools::check()`. Fix any errors. Inspect the additions and then add and commit the changes. Then push to the remote repo. 
 :::
 
+
+
+
+## Another example
+
+:::rmdwarning
+**Exercise**: Document the following function and write a test for it. Think about checking for a positive definite covariance matrix and create a function for this check. 
+:::
+
+
+```r
+sim.expr.data <- function(n, n0, p, rho.0, rho.1){
+  # Initiate Simulation parameters
+  # n: total number of subjects
+  # n0: number of subjects with X=0
+  # n1: number of subjects with X=1
+  # p: number of genes
+  # rho.0: rho between Z_i and Z_j when X=0
+  # rho.1: rho between Z_i and Z_j when X=1
+  
+  # Simulate gene expression values according to exposure X=0, X=1, 
+  # according to a centered multivariate normal distribution with 
+  # covariance between Z_i and Z_j being rho^|i-j|
+  times = 1:p # used for creating covariance matrix
+  H <- abs(outer(times, times, "-"))
+  V0 <- rho.0^H
+  V1 <- rho.1^H
+  
+  # rows are people, columns are genes
+  genes0 <- MASS::mvrnorm(n = n0, mu = rep(0,p), Sigma = V0)
+  genes1 <- MASS::mvrnorm(n = n1, mu = rep(0,p), Sigma = V1)
+  genes <- rbind(genes0,genes1)
+  
+  colnames(genes) <- paste0("Gene", 1:p)
+  rownames(genes) <- paste0("Subject", 1:n)
+  
+  return(genes)
+}
+
+genes <- sim.expr.data(n = 100, n0 = 50, p = 100, 
+                       rho.0 = 0.01, rho.1 = 0.95)
+
+# checking for positive definite matrix called tt
+if (!all(eigen(tt)$values > 0)) {
+  message("eta * sigma2 * kin not PD, using Matrix::nearPD")
+  tt <- Matrix::nearPD(tt)$mat
+}
+```
 
 
 <br><br>
