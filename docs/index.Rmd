@@ -926,6 +926,97 @@ knitr::kable(df_roxy2,
 ```
 
 
+# `devtools` functions
+
+<p>Here are some of the key functions included in devtools and what they do, roughly in the order you are likely to use them as you develop an R package:</p>
+<table border="1" class="colwidths-given docutils" id="id1">
+<caption><span class="caption-text">Useful <strong>devtools</strong> functions</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="31%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Function</th>
+<th class="head">Use</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>load_all</strong></td>
+<td>Load the code for all functions in the package</td>
+</tr>
+<tr class="row-odd"><td><strong>document</strong></td>
+<td>Create \man documentation files and the “NAMESPACE” file from roxygen2 code</td>
+</tr>
+<tr class="row-even"><td><strong>check</strong></td>
+<td>Check the full R package for any ERRORs, WARNINGs, or NOTEs</td>
+</tr>
+<tr class="row-odd"><td><strong>build_win</strong></td>
+<td>Build a version of the package for Windows and send it to be checked on a Windows machine. You’ll receive an email with a link to the results.</td>
+</tr>
+<tr class="row-even"><td><strong>submit_cran</strong></td>
+<td>Submit the package to CRAN</td>
+</tr>
+</tbody>
+</table>
+
+
+
+# `usethis` functions
+
+<p>Here are some of the key functions included in usethis and what they do:</p>
+<table border="1" class="colwidths-given docutils" id="id1">
+<caption><span class="caption-text">Useful <strong>devtools</strong> functions</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="31%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Function</th>
+<th class="head">Use</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>use_data</strong></td>
+<td>Save an object in your R session as a dataset in the package</td>
+</tr>
+<tr class="row-odd"><td><strong>use_description</strong></td>
+<td>Set up the package to include a DESCRIPTION file</td>
+</tr>
+<tr class="row-even"><td><strong>use_namespace</strong></td>
+<td>Set up the package to include a NAMESPACE file</td>
+</tr>
+<tr class="row-odd"><td><strong>use_vignette</strong></td>
+<td>Set up the package to include a vignette</td>
+</tr>
+<tr class="row-even"><td><strong>use_travis</strong></td>
+<td>Set up travis ci</td>
+</tr>
+<tr class="row-odd"><td><strong>use_appveyor</strong></td>
+<td>Set up appveyor</td>
+</tr>
+<tr class="row-even"><td><strong>use_testthat</strong></td>
+<td>Set up folders for testing</td>
+</tr>
+<tr class="row-odd"><td><strong>use_test</strong></td>
+<td>Create test file named by the function argument in the correct folder</td>
+</tr>
+<tr class="row-even"><td><strong>use_readme_rmd</strong></td>
+<td>Set up the package to include a README file in Rmarkdown format</td>
+</tr>
+<tr class="row-odd"><td><strong>use_build_ignore</strong></td>
+<td>Specify files that should be ignored when building the R package (for example, if you have a folder where you’re drafting a journal article about the package, you can include all related files in a folder that you set to be ignored during the package build)</td>
+</tr>
+<tr class="row-odd"><td><strong>use_cran_comments</strong></td>
+<td>Create a file where you can add comments to include with your CRAN submission.</td>
+</tr>
+<tr class="row-odd"><td><strong>use_news_md</strong></td>
+<td>Add a file to the package to give news on changes in new versions</td>
+</tr>
+</tbody>
+</table>
+
+
+
 # Resources
 
 1. [Cheat Sheet](https://rawgit.com/rstudio/cheatsheets/master/package-development.pdf)
